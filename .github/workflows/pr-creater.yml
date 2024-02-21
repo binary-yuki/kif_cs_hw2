@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: pull-request
     - uses: diillson/auto-pull-request@v1.0.1
       with:
         source_branch: ""                                 # If blank, default: triggered branch
