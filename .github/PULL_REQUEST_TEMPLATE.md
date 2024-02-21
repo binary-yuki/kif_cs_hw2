@@ -7,9 +7,9 @@
 - [ ] 📝 docs
 
 
-#### 🔀 变更说明 | Description of Change
+#### 🔀 变更说明 | Description of Changes
 
-<!-- Thank you for your Pull Request. Please provide a description above. -->
+<!-- Please provide a description above. -->
 
 #### 📝 补充信息 | Additional Information
 
