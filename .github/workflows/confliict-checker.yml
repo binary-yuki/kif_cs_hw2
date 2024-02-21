@@ -9,3 +9,15 @@ jobs:
       - uses: outsideris/potential-conflicts-checker-action@0.1.0
         with:
           ghToken: ${{ secrets.GITHUB_TOKEN }}
+
+  # add github merge check
+  pr-merge-check:
+      name: PR Merge Bot
+      runs-on: ubuntu-latest
+      steps:
+        - uses: squalrus/merge-bot@v0.4.5
+
+
+
+
+
