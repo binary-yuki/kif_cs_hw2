@@ -1,20 +1,18 @@
-name: Create production promotion pull request
+name: Pull Request Automation
 on:
-  push:
-    branches:
-      - main
+  pull_request_target:
+    types: [ assigned , auto_merge_disabled, opened, edited, reopened, synchronize, converted_to_draft, ready_for_review, review_requested]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  issue_comment:
+    types: [created]
+
 jobs:
-  productionPromotion:
+  process:
+    name: Process
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: production
-      - name: Reset promotion branch
-        run: |
-          git fetch origin main:main
-          git reset --hard main
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: tz-dev
+    - uses: DrBarnabus/pullrequest-automation@v3 # latest matching major version 'v3' or specific version 'v2.4.1' or branch 'main'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        config-ref: main
