@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-    - "feature*"  # Support wildcard matching
+    - "*"  # Support wildcard matching
 
 jobs:
   pull-request:
