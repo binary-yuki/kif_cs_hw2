@@ -748,12 +748,24 @@ class RLPlayer(Player):
 
         param board: TicTacToe object
         """
-
-
+        # todo: define Training mode and get a move for RL agent
         # Homework 2: Implement this method as described in the
         # assignment brief.  Write your code here.
+        if self.mode == TRAINING_MODE:
+            # if mode is training, make a random or best move based on epsilon
+            # 如果是训练模式 根据 epsilon 做一个随机移动（取值0-1）或者最好的移动
+            if random.random() < self.epsilon:
+                # move randomly
+                move = random.choice(board.remainingMoves)
+                board.makeMove(move, self.letter)
+            else:
+                # call getRLMove to make the best move
+                # 用 getRLMove 函数来做最好的移动
+                self.getRLMove(board)
+        else:
+            # If mode is not training, always make the best move
+            self.getRLMove(board)
 
-        pass
 
     def rewardState(self, board, prevBoard=None):
         """
