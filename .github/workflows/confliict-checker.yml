@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: outsideris/potential-conflicts-checker-action@0.1.0
         with:
+          ghToken: ${{ secrets.GITHUB_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
 
