@@ -764,6 +764,7 @@ class RLPlayer(Player):
                 self.getRLMove(board)
         else:
             # If mode is not training, always make the best move
+            # 如果不是训练模式 做最好的移动
             self.getRLMove(board)
 
 
