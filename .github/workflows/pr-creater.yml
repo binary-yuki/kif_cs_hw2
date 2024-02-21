@@ -14,7 +14,7 @@ jobs:
         with:
           source_branch: ""                                 # If blank, default: triggered branch
           destination_branch: "main"                        # If blank, default: master
-          pr_title: "Pulling ${{ github.ref }} into master" # Title of pull request
+          pr_title: "Pulling ${{ github.ref }} into main branch" # Title of pull request
           pr_body: ":crown: *An automated PR*"              # Full markdown support, requires pr_title to be set
           pr_template: ".github/PULL_REQUEST_TEMPLATE.md"   # Path to pull request template, requires pr_title to be set, excludes pr_body
           pr_reviewer: "Binary-Yuki,worker"                 # Comma-separated list (no spaces)
