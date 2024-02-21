@@ -17,9 +17,10 @@ jobs:
           :crown: *An automated PR*
           This is an automated pull request from ${{ github.ref }} into master.
         pr_template: ".github/PULL_REQUEST_TEMPLATE.md"   # Path to pull request template, requires pr_title to be set, excludes pr_body
-        pr_reviewer: "diillson,worker"                         # Comma-separated list (no spaces)
-        pr_assignee: "diillson,worker"                         # Comma-separated list (no spaces)
+        pr_reviewer: "binary-yuki,worker"                         # Comma-separated list (no spaces)
+        pr_assignee: "binary-yuki,worker"                         # Comma-separated list (no spaces)
         pr_label: "auto-pr"                               # Comma-separated list (no spaces)
+        pr_milestone: "startup"                       # Milestone name no Required it is comment
         pr_draft: true                                    # Creates pull request as draft
         pr_allow_empty: true                              # Creates pull request even if there are no changes
         github_token: ${{ secrets.CUSTOM_GH_TOKEN }}      # If blank, default: secrets.GITHUB_TOKEN
