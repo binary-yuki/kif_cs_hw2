@@ -8,6 +8,7 @@ of game state. Remove minimax & added ability to save policy.
 """
 
 import random
+
 RL_AGENT = 1
 RANDOM_AGENT = 2
 HUMAN_AGENT = 3
@@ -15,8 +16,8 @@ OTHER_AGENT = 7
 TRAINING_MODE = 5
 PLAYING_MODE = 6
 
-
-RANDOM_NUMBER_SEED = 9999
+# todo: replace this
+RANDOM_NUMBER_SEED = random.random()
 random.seed(RANDOM_NUMBER_SEED)
 
 
@@ -67,7 +68,6 @@ def runEpisode(board):
 
     rlplayer.previousState = board.copy()
     while not board.isGameOver():
-
         player = board.next()
         player.makeMove(board)
 
@@ -75,7 +75,6 @@ def runEpisode(board):
 
 
 class TicTacToe:
-
     """
     This class represents the TicTacToe board. It draws the board and
     keeps track of the moves that have been made.
@@ -293,9 +292,9 @@ class TicTacToe:
         """
 
         print()
-        print(self.board[0]+self.board[1]+self.board[2])
-        print(self.board[3]+self.board[4]+self.board[5])
-        print(self.board[6]+self.board[7]+self.board[8])
+        print(self.board[0] + self.board[1] + self.board[2])
+        print(self.board[3] + self.board[4] + self.board[5])
+        print(self.board[6] + self.board[7] + self.board[8])
         print()
 
     def makeMove(self, location, mark):
@@ -572,8 +571,8 @@ class Tournament:
         """
 
         K = 30
-        qa = 10**(player1.rating/400)
-        qb = 10**(player2.rating/400)
+        qa = 10 ** (player1.rating / 400)
+        qb = 10 ** (player2.rating / 400)
 
         e1 = qa / (qa + qb)
         e2 = qb / (qa + qb)
@@ -607,7 +606,7 @@ class Tournament:
 
         print()
         print(f'{"Agents":<7} {"Won":<4} {"Lost":<5} {"Draws":<6} {"Rating"}')
-        print('-'*32)
+        print('-' * 32)
 
         for player in players:
             wins = player.gamesW
@@ -767,7 +766,6 @@ class RLPlayer(Player):
             # 如果不是训练模式 做最好的移动
             self.getRLMove(board)
 
-
     def rewardState(self, board, prevBoard=None):
         """
         This method updates the value function 'table'; it rewards
@@ -779,8 +777,25 @@ class RLPlayer(Player):
 
         # Homework 2: Implement this method as described in the
         # assignment brief.  Write your code here.
+        # if no previous board state, set it to current board
+        if not prevBoard:
+            prevBoard = self.previousState
 
-        pass
+        # Get keys from previous board and current board states
+        prevBoardKey = prevBoard.getKey(self.letter)
+        boardKey = board.getKey(self.letter)
+
+        prevVal = self.valueOfState(prevBoardKey)
+
+        # Calculate reward using the Bellman equation
+        reward = self.getReward(board)
+        value = prevVal + self.learningRate * (reward + self.discountRate * self.valueOfState(boardKey) - prevVal)
+
+        # Update value function table
+        self.valueFunction[prevBoardKey] = value
+
+        # Update previous board state
+        self.previousState = board.copy()
 
     def getReward(self, board):
         """
@@ -799,4 +814,15 @@ class RLPlayer(Player):
         # existing essential methods.
 
         # Make sure to replace this return state with your own code
-        return 1
+        if board.isGameWon(self.letter):
+            # if the RL player has won the game, return a positive reward
+            return 10
+        elif board.isGameWon(self.opponent):
+            # if the opponent has won the game, return a negative reward
+            return -10
+        elif board.isGameDraw():
+            # if the game is a draw, return a smaller positive reward
+            return 5
+        else:
+            # for other states, return a neutral reward
+            return 0
