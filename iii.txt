@@ -1,0 +1,33 @@
+{
+    "assignment_submission": {
+        "id": 233514143,
+        "created_at": "2024-02-23T06:36:05.234697-08:00",
+        "status": "processed",
+        "source": "web",
+        "lateness_in_words": null,
+        "export_allowed": false,
+        "active": true,
+        "start_time_utility_submission": false
+    },
+    "grades_visible": false,
+    "question_submissions": [
+        {
+            "score": "0.0",
+            "question_id": 33792361,
+            "data": {},
+            "active": true,
+            "answers": {},
+            "id": 2071028286,
+            "evaluations": [
+                {
+                    "id": 1748865195,
+                    "points": "0.0",
+                    "comments": null
+                }
+            ],
+            "grade_path": "/courses/699032/questions/33792361/submissions/2071028286/grade",
+            "annotations": []
+        }
+    ],
+    "alert": null
+}

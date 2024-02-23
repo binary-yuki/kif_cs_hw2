@@ -1,6 +1,6 @@
 import random
 
-import TicTacToe as ttt
+import TicTacToe1 as ttt
 
 BEST_CONFIGS = []
 

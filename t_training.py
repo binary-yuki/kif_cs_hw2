@@ -1,4 +1,4 @@
-import TicTacToe as ttt
+import TicTacToe1 as ttt
 
 
 def main():
@@ -28,8 +28,8 @@ def main():
     # Evaluation
     rlAgent.setMode(ttt.PLAYING_MODE)
     tournament = ttt.Tournament()
-    tournament.start(rlAgent, partner, 50000)
-    tournament.start(partner, rlAgent, 50000)
+    tournament.start(rlAgent, partner, 500)
+    tournament.start(partner, rlAgent, 500)
     tournament.printStats([rlAgent, partner])
 
 

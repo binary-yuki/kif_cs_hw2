@@ -1,4 +1,4 @@
-import TicTacToe as ttt
+import TicTacToe1 as ttt
 
 
 def main():
