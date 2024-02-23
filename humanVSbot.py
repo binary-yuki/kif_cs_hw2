@@ -6,7 +6,7 @@ def main():
     player1 = ttt.createPlayer('X', ttt.HUMAN_AGENT)
     player1.name = 'Alice'
 
-    player2 = ttt.createPlayer('O', ttt.HUMAN_AGENT)
+    player2 = ttt.createPlayer('O', ttt.RL_AGENT)
     player2.name = "Bob"
 
     # Create board

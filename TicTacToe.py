@@ -8,6 +8,7 @@ of game state. Remove minimax & added ability to save policy.
 """
 
 import random
+
 RL_AGENT = 1
 RANDOM_AGENT = 2
 HUMAN_AGENT = 3
@@ -15,8 +16,8 @@ OTHER_AGENT = 7
 TRAINING_MODE = 5
 PLAYING_MODE = 6
 
-
-RANDOM_NUMBER_SEED = 9999
+# todo: replace this
+RANDOM_NUMBER_SEED = random.random()
 random.seed(RANDOM_NUMBER_SEED)
 
 
@@ -67,7 +68,6 @@ def runEpisode(board):
 
     rlplayer.previousState = board.copy()
     while not board.isGameOver():
-
         player = board.next()
         player.makeMove(board)
 
@@ -75,7 +75,6 @@ def runEpisode(board):
 
 
 class TicTacToe:
-
     """
     This class represents the TicTacToe board. It draws the board and
     keeps track of the moves that have been made.
@@ -293,9 +292,9 @@ class TicTacToe:
         """
 
         print()
-        print(self.board[0]+self.board[1]+self.board[2])
-        print(self.board[3]+self.board[4]+self.board[5])
-        print(self.board[6]+self.board[7]+self.board[8])
+        print(self.board[0] + self.board[1] + self.board[2])
+        print(self.board[3] + self.board[4] + self.board[5])
+        print(self.board[6] + self.board[7] + self.board[8])
         print()
 
     def makeMove(self, location, mark):
@@ -572,8 +571,8 @@ class Tournament:
         """
 
         K = 30
-        qa = 10**(player1.rating/400)
-        qb = 10**(player2.rating/400)
+        qa = 10 ** (player1.rating / 400)
+        qb = 10 ** (player2.rating / 400)
 
         e1 = qa / (qa + qb)
         e2 = qb / (qa + qb)
@@ -607,7 +606,7 @@ class Tournament:
 
         print()
         print(f'{"Agents":<7} {"Won":<4} {"Lost":<5} {"Draws":<6} {"Rating"}')
-        print('-'*32)
+        print('-' * 32)
 
         for player in players:
             wins = player.gamesW
@@ -767,7 +766,6 @@ class RLPlayer(Player):
             # 如果不是训练模式 做最好的移动
             self.getRLMove(board)
 
-
     def rewardState(self, board, prevBoard=None):
         """
         This method updates the value function 'table'; it rewards
@@ -779,8 +777,25 @@ class RLPlayer(Player):
 
         # Homework 2: Implement this method as described in the
         # assignment brief.  Write your code here.
+        # if no previous board state, set it to current board
+        if not prevBoard:
+            prevBoard = self.previousState
 
-        pass
+        # Get keys from previous board and current board states
+        prevBoardKey = prevBoard.getKey(self.letter)
+        boardKey = board.getKey(self.letter)
+
+        prevVal = self.valueOfState(prevBoardKey)
+
+        # Calculate reward using the Bellman equation
+        reward = self.getReward(board)
+        value = prevVal + self.learningRate * (reward + self.discountRate * self.valueOfState(boardKey) - prevVal)
+
+        # Update value function table
+        self.valueFunction[prevBoardKey] = value
+
+        # Update previous board state
+        self.previousState = board.copy()
 
     def getReward(self, board):
         """
@@ -799,4 +814,182 @@ class RLPlayer(Player):
         # existing essential methods.
 
         # Make sure to replace this return state with your own code
-        return 1
+        if board.isGameWon(self.letter):
+            # if the RL player has won the game, return a positive reward
+            return 10
+        elif board.isGameWon(self.opponent):
+            # if the opponent has won the game, return a negative reward
+            return -10
+        elif board.isGameDraw():
+            # if the game is a draw, return a smaller positive reward
+            return 5
+        else:
+            # for other states, return a neutral reward
+            return 0
+
+
+class binaryYukiBot(Player):
+    """
+    This class represents a robot player which always moves to the corners first,
+    or the center if it's the second move and the first move was to the center of bottom surface.
+    """
+
+    def __init__(self, letter):
+        """
+        Creates a new robot player.
+        param letter: String, can only be 'X' or 'O'
+        """
+        super().__init__(letter, HUMAN_AGENT)
+        self.moveCount = 0
+        self.opponentLetter = 'X' if self.letter == 'O' else 'O'
+
+    def makeMove(self, board):
+        """
+        This method makes the move (updates the board) for the robot player
+        param board: A TicTacToe object
+        """
+        moveLegal = False
+        while not moveLegal:
+            # first move to the corners
+            if self.moveCount == 0:
+                playerMove = self.moveToCorner()
+            # second move to center if first move is in the center of the bottom surface
+            elif self.moveCount == 1 and board.board[4] != '*':
+                playerMove = self.moveToCenter()
+            else:
+                # apply standard win strategy in a 2D tictactoe game
+                playerMove = self.standardWinStrategy(board)
+            moveLegal = board.makeMove(playerMove, self.letter)
+            if moveLegal:
+                self.moveCount += 1
+
+    def moveToCorner(self):
+        """
+        This method returns a corner index.
+        return: Integer
+        """
+        corners = [0, 2, 6, 8]
+        return random.choice(corners)
+
+    def moveToCenter(self):
+        """
+        This method returns the center index.
+        return: Integer
+        """
+        return 4
+
+    def standardWinStrategy(self, board):
+        """
+        This method outlines the win strategy for a 2D tictactoe game.
+        :param board: A TicTacToe object
+        """
+        # Define the win strategy here
+        if self.firstPlayer:
+            # For first player
+            if board.moveCount == 0:
+                return 0
+            elif board.moveCount == 2:
+                if 4 in board.remainingMoves:
+                    return 4
+                else:
+                    return self.weightedStrategy(board)
+            else:
+                move = self.twoInARowStrategy(board)
+                if move is None:
+                    move = self.blockOpponentStrategy(board)
+                if move is None:
+                    move = self.weightedStrategy(board)
+                return move
+
+        else:
+            # For second player
+            if board.moveCount == 1:
+                if board.board[4] == '*':
+                    return 4
+                elif board.board[0] == '*':
+                    return 0
+            else:
+                move = self.blockOpponentStrategy(board)
+                if move is None:
+                    move = self.twoInARowStrategy(board)
+                if move is None:
+                    move = self.weightedStrategy(board)
+                return move
+
+    def twoInARowStrategy(self, board):
+        """
+        If there are two of the player's marks in a row and the third spot is available,
+        returns that spot. Otherwise, make a random move.
+        :param board: A TicTacToe object
+        """
+        win_lines = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]
+        for line in win_lines:
+            if board.board[line[0]] == board.board[line[1]] == self.letter and board.board[line[2]] == '*':
+                return line[2]
+            elif board.board[line[1]] == board.board[line[2]] == self.letter and board.board[line[0]] == '*':
+                return line[0]
+            elif board.board[line[0]] == board.board[line[2]] == self.letter and board.board[line[1]] == '*':
+                return line[1]
+        return random.choice(board.remainingMoves)  # Make a random move if there's no winning strategy
+
+    def blockOpponentStrategy(self, board):
+        """
+        A new strategy:
+            - if the opponent occupies any corner, it should prioritize the center (4),
+            - and then go to intercept the point where the opponent may connect in a straight line.
+        """
+        # Check if opponent is in any corner
+        corners = [0, 2, 6, 8]
+        for corner in corners:
+            if board.board[corner] == self.opponentLetter:
+                # If center is free, return center
+                if board.board[4] == '*':
+                    return 4
+
+        win_lines = [(0, 4, 8), (2, 4, 6)]
+        for line in win_lines:
+            if board.board[line[0]] == board.board[line[1]] == self.opponentLetter and board.board[line[2]] == '*':
+                return line[2]
+            elif board.board[line[1]] == board.board[line[2]] == self.opponentLetter and board.board[line[0]] == '*':
+                return line[0]
+            elif board.board[line[0]] == board.board[line[2]] == self.opponentLetter and board.board[line[1]] == '*':
+                return line[1]
+
+        return self.twoInARowStrategy(board)
+
+    def openLinesStrategy(self, board):
+        """
+        Return the index of the first spot in the first open line found.
+        An open line is defined as having at least two unoccupied spots.
+        """
+        win_lines = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8),
+                     (2, 4, 6)]  # potential winning lines 斜线和横线 必胜
+        for line in win_lines:
+            line_spots = [board.board[spot] for spot in line]
+            if line_spots.count("*") >= 2:  # if there are two or more open spots in this line
+                # 如果这条线上有两个或者更多的空位
+                for spot in line:
+                    if board.board[spot] == "*":  # return the first open spot
+                        return spot
+
+        return self.twoInARowStrategy(board)  # fallback strategy if no open line is found
+
+    def weightedStrategy(self, board):
+        win_lines = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]
+        weights = [0] * 9
+        for line in win_lines:
+            line_spots = [board.board[spot] for spot in line]
+            for spot in line:
+                if line_spots.count(self.letter) > 0 and line_spots.count(self.opponentLetter) == 0:
+                    weights[spot] += 2
+                elif line_spots.count('*') == len(line):
+                    weights[spot] += 1
+                elif line_spots.count(self.opponentLetter) > 0 and line_spots.count(self.letter) == 0:
+                    weights[spot] -= 2
+
+        highest_weight_spots = [i for i, weight in enumerate(weights) if
+                                weight == max(weights) and board.board[i] == '*']
+        if highest_weight_spots:
+            return random.choice(highest_weight_spots)
+        else:
+            return random.choice(board.remainingMoves)  #
