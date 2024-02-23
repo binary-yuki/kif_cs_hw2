@@ -15,7 +15,7 @@ def main():
     rlAgent.save()
 
     # Training Session 2 Optional
-    rlAgent.initTraining(0.867224, 0.309477, 0.2077)
+    rlAgent.initTraining(0.867224, 0.3, 0.2077)
     ttt.train(partner, rlAgent, 1000)
 
     # Evaluation
