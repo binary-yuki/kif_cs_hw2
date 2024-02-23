@@ -1,6 +1,6 @@
 # readme
 
-
+```txt
 Agents  Won  Lost  Draws  Rating
 --------------------------------
 RL Agent 582  328   90     2545.5
