@@ -26,7 +26,6 @@ def main():
     ttt.train(partner, rlAgent, 1000)
 
     # Evaluation
-    rlAgent.setMode(ttt.PLAYING_MODE)
     tournament = ttt.Tournament()
     tournament.start(rlAgent, partner, 500)
     tournament.start(partner, rlAgent, 500)

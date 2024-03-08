@@ -1,4 +1,4 @@
-import TicTacToe1 as ttt
+import TicTacToe as ttt
 
 
 def main():
@@ -6,12 +6,12 @@ def main():
     player1 = ttt.createPlayer('X', ttt.HUMAN_AGENT)
     player1.name = 'Alice'
 
-    player2 = ttt.createPlayer('O', ttt.RL_AGENT)
+    player2 = ttt.createPlayer('O', ttt.minAndMAx)
     player2.name = "Bob"
 
     # Create board
     board = ttt.TicTacToe()
-    board.setPlayers(player1, player2)
+    board.setPlayers(player2, player1)
     board.drawBoard()
 
     # Run Game
@@ -19,7 +19,6 @@ def main():
         player = board.next()
         player.makeMove(board)
         board.drawBoard()
-
     winner = board.getWinner()
 
     if winner:
